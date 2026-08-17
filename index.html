@@ -881,9 +881,25 @@ function startGeneratedBeat(){
   schedulerTimer = setInterval(scheduler, 25);
   musicPlaying = true;
 }
+const MUSIC_TRACKS = [
+  { name:"Nto - Note Blanche", file:"Nto - Note Blanche (Official Video).mp3" },
+  { name:"Guy Mantzur, Roy RosenfeID - Epika", file:"Guy Mantzur, Roy RosenfeID - Epika (Original Mix).mp3" },
+  { name:"Stephan Bodzin - Singularity", file:"Stephan Bodzin - Singularity (Original) - Life and Death.mp3" }
+];
+let userChoseFile = false;
+
+function pickRandomRepoTrack(){
+  if(MUSIC_TRACKS.length===0) return;
+  const track = MUSIC_TRACKS[Math.floor(Math.random()*MUSIC_TRACKS.length)];
+  audioEl.src = 'music/' + encodeURIComponent(track.file);
+  musicMode = 'file';
+  document.getElementById('music-file-label').textContent = '🎵 ' + track.name + ' (auto)';
+}
+
 const audioEl = new Audio(); audioEl.loop = true;
 function onMusicFileChosen(e){
   const file = e.target.files[0]; if(!file) return;
+  userChoseFile = true;
   audioEl.src = URL.createObjectURL(file);
   musicMode = 'file';
   document.getElementById('music-file-label').textContent = '🎵 ' + file.name;
@@ -1259,6 +1275,7 @@ function updateProgressBar(){
 function startSession(){
   if(exercises.length===0){ alert('Génère une séance ou ajoute au moins un exercice avant de lancer.'); return; }
   buildTimeline(); ptr = 0; paused = false; ensureAudio();
+  if(!userChoseFile) pickRandomRepoTrack();
   document.getElementById('setup').style.display='none';
   document.getElementById('start-bar').style.display='none';
   document.getElementById('session').style.display='flex';
